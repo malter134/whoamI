@@ -3,20 +3,39 @@ Building AI course project : Whoami model with TF agents
 
 ## Summary
 
-Describe briefly in 2-3 sentences what your project is about. About 250 characters is a nice length! 
-
+Here we propose a model of TF-agents to play the famous game "Who am I?".
+Our version goes beyond the "basic" game because we will use other capabilities provided by AI (training of concurrent dynamic agents, image recognition and language models), to be able to apply this type of game to: a configurable number of characters (larger or smaller than the base game) and any photo of characters in a scene (so we can play with a family photo for example if we want)
 
 ## Background
 
-Which problems does your idea solve? How common or frequent is this problem? What is your personal motivation? Why is this topic important or interesting?
+There are already mathematical theories on gambling. These generally offer an approach in the form of probabilistic calculations on the chances of winning, highlighting the combinatorics of questions. Some of them have been recalled here in the sources.
 
-This is how you make a list, if you need one:
-* problem 1
-* problem 2
-* etc.
+Our version goes beyond the "basic" game because we will use other capabilities provided by AI (training of concurrent dynamic agents, image recognition and language models), to be able to apply this type of game to:
+* a configurable number of characters (larger or smaller than the base game)
+* any photo of characters in a scene (so we can play with a family photo for example if we want)
 
+Apart from the "practical" side of this game, the interest of this game is to contribute at a theory of eliminatory questions around an "optimum" non-combinatorial question sequence to determine an individual in a group as efficiently as possible (interrogation strategy to find missing persons more quickly, etc.)
 
 ## How is it used?
+
+In the first part, we develop game data for the model:
+  * Define the list of game questions with NLP traduction
+  * Establish the dictionnary of people and the basic functions of the game environment with easyocr, huggingface, insighface, transformers and pipeline
+  * Test these elements on several examples.
+
+In the second part, we develop the game model as a DQN agents working on a environment:
+   * Define the game environment with constraints and using the game data
+   * Reuse the multi-agent interface
+   * Instantiate the concurrent DQN agents (one by player) with QNetwork
+   * Train the model
+   * Analyse the question sequences
+   * Evaluate the model
+   * Try to adapt the game at another images or questions recorded with cosine similarity with sentence transformers and google image feature extraction
+     
+Topic has been developt in a Colab project.
+
+You have need to update the "basic" Colab configuration on each part as described in the topic.
+
 
 Describe the process of using the solution. In what kind situations is the solution needed (environment, time, etc.)? Who are the users, what kinds of needs should be taken into account?
 
@@ -29,20 +48,81 @@ If you need to resize images, you have to use an HTML tag, like this:
 
 This is how you create code examples:
 ```
-def main():
-   countries = ['Denmark', 'Finland', 'Iceland', 'Norway', 'Sweden']
-   pop = [5615000, 5439000, 324000, 5080000, 9609000]   # not actually needed in this exercise...
-   fishers = [1891, 2652, 3800, 11611, 1757]
+import random
 
-   totPop = sum(pop)
-   totFish = sum(fishers)
+whoami_env = WhoAmIMultiAgentEnv()
 
-   # write your solution here
+ts = whoami_env.reset()
+print('Reward:', ts.reward, 'Board:')
+print_whoami(ts.observation)
 
-   for i in range(len(countries)):
-      print("%s %.2f%%" % (countries[i], 100.0))    # current just prints 100%
+random.seed(1)
 
-main()
+# Players begin to choose a random person
+selected_item = np.array([ 0, 0 ])
+selected_item[0] = random.choice(range(nb_person))
+selected_item[1] = selected_item[0]
+while(selected_item[0] == selected_item[1]):
+  selected_item[1] = random.choice(range(nb_person))
+
+# Player 1 begin
+player = 1
+
+log=True
+
+# test policy
+# if test policy is 1, the questions will be computed by the environment
+# also, the question will be random injected
+# You can update this value to test other policy
+test_policy =0
+#test_policy = 1
+
+# Copy of question list
+r_question_list_for_player_1 = list(question_list_for_player_1)
+r_question_list_for_player_2 = list(question_list_for_player_2)
+
+# The question will be mean computed by environment
+if test_policy == 1:
+    # The question will be mean computed by environment
+    # First question
+    q_gen_1 = question_list.index(random.choice(question_list_for_player_1))
+    q_gen_2 = question_list.index(random.choice(question_list_for_player_2))
+    action = {
+      'selected_item': selected_item,
+      'question': np.array([ q_gen_1, q_gen_2 ]),
+      'answer': np.array([ 0, 0 ]), # Always redefined by environment
+      'player': player
+    }
+
+while not ts.is_last():
+    if test_policy != 1:
+        # Here the questions are random injected
+        q_gen_1 = question_list.index(random.choice(r_question_list_for_player_1))
+        q_gen_2 = question_list.index(random.choice(r_question_list_for_player_2))
+        # To use the question only once
+        r_question_list_for_player_1.remove(question_list[q_gen_1])
+        r_question_list_for_player_2.remove(question_list[q_gen_2])
+        action = {
+          'selected_item': selected_item,
+          'question': np.array([ q_gen_1, q_gen_2 ]),
+          'answer': np.array([ 0, 0 ]), # Always redefined by environment
+          'player': player
+        }
+    else:
+        # Update only the player
+        action['player'] = player
+
+    other_player = 1 + player % 2
+    print('Player:', player, '\n',
+          'Question of player:', question_list[action['question'][player-1]], '\n',
+          'Answer of other player:', yesno(action['answer'][other_player-1]), '\n',
+          'Question of other player:', question_list[action['question'][other_player-1]], '\n',
+          'Answer of player:', yesno(action['answer'][player-1]), '\n',
+          'Reward:', ts.reward, 'Board:')
+    ts = whoami_env.step(action)
+    print_whoami(ts.observation)
+    print_seq_questions(whoami_env.get_seq_questions())
+    player = other_player
 ```
 
 
@@ -58,6 +138,9 @@ If you need to use links, here's an example:
 
 ## Challenges
 
+Topic don't develop a model on the "lie factor" to better account for the fact that the adversary may lie to a question.
+To be applicable, the volume of data must be much larger and the model must be trained extensively on this volume of data.
+
 What does your project _not_ solve? Which limitations and ethical considerations should be taken into account when deploying a solution like this?
 
 ## What next?
@@ -67,8 +150,7 @@ How could your project grow and become something even more? What kind of skills,
 
 ## Acknowledgments
 
-* list here the sources of inspiration 
-* do not use code, images, data etc. from others without permission
-* when you have permission to use other people's materials, always mention the original creator and the open source / Creative Commons licence they've used
-  <br>For example: [Sleeping Cat on Her Back by Umberto Salvagnin](https://commons.wikimedia.org/wiki/File:Sleeping_cat_on_her_back.jpg#filelinks) / [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
-* etc
+* HOW TO WIN THE GAME “WHO IS IT?”: THANKS TO MATHEMATICS, Pierre-Luc Racine, March 16, 2020, https://urbania.fr/article/comment-gagner-au-jeu-qui-est-ce-grace-aux-mathematiques
+* Optimal Strategy in “Guess Who?”: Beyond Binary Search, Mihai Nica, January 19, 2016, https://arxiv.org/pdf/1509.03327
+* Multi-Agent Reinforcement Learning with TF-Agents, Dylan Cope, Jun 2020, https://github.com/DylanCope/Multi-Agent-RL-with-TF/blob/master/DMARL%20with%20TF-Agents.ipynb
+* Training a Deep Q Network with TF Agents, Tensor Flow, https://www.tensorflow.org/agents/tutorials/1_dqn_tutorial?hl=en
