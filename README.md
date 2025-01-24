@@ -6,7 +6,7 @@ Building AI course project : Whoami model with TF agents
 Here we propose a model of TF-agents to play the famous game "Who am I?".
 Our version goes beyond the "basic" game because we will use other capabilities provided by AI (training of concurrent dynamic agents, image recognition and language models), to be able to apply this type of game to: a configurable number of characters (larger or smaller than the base game) and any photo of characters in a scene (so we can play with a family photo for example if we want).
 
-Only a summarize of activities is provided here. Works are developed in the Colab file: [Colab Whoami model with TF agents](https://github.com/malter134/whoamI/Whomai model with TF agents.ipynb)
+Only a summarize of activities is provided here. Works are developed in the Colab file: [Colab Whoami model with TF agents](https://github.com/malter134/whoamI/Whomai_ model_with_TF_agents.ipynb)
 
 ## Background
 
@@ -132,17 +132,10 @@ while not ts.is_last():
 Game datas are computed in the topics in using some samples of images and a list of questions.
 AI methods are described in the array below.
 
-| AI methods                                           | Description                                 |
-| ---------------------------------------------------- | ------------------------------------------- |
-| Transformers and pipelines                           | Bwild game datas:                           |
-| (NLP traduction, easyocr, huggingface, insighface)   | - Questions are translated                  |
-|                                                      | - Person images are bounded and split with  |
-|                                                      | face and person recognition                 |
-|                                                      | - For each person identified, get a answer  |
-|                                                      |  on all the available questions             |
-|                                                      | - If the name of person exist in the image, |
-|                                                      | take it                                     |
-
+| AI methods                                                                       | Description                                 |
+| -------------------------------------------------------------------------------- | ------------------------------------------- |
+| Transformers and pipelines (NLP traduction, easyocr, huggingface, insighface)    | Bwild game datas:\n- Questions are translated\n- Person images are bounded and split with face and person recognition\n- For each person identified, get a answer on all the available questions\n- If the name of person exist in the image, take it |
+|                     XXXX                                                         |   XXXXXXX                                   |
 
 
 
