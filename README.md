@@ -132,17 +132,18 @@ while not ts.is_last():
 Game datas are computed in the topics in using some samples of images and a list of questions.
 AI methods are described in the array below.
 
-| AI methods                                                                       | Description                                 |
-| -------------------------------------------------------------------------------- | ------------------------------------------- |
-| Transformers and pipelines<br/>(NLP traduction, easyocr, huggingface, insighface)| Build game datas:<br/>- Questions are translated\n- Person images are bounded and split with face and person recognition<br/>- For each person identified, get a answer on all the available questions<br/>- If the name of person exist in the image, take it |
-|                     XXXX                                                         |   XXXXXXX                                   |
-
-
-
+| AI methods                                                                                      | Description                                 |
+| ----------------------------------------------------------------------------------------------  | ------------------------------------------- |
+| Transformers and pipelines<br/>(NLP traduction, easyocr, huggingface, insighface)               | Build game datas:<br/>- Questions are translated\n- Person images are bounded and split with face and person recognition<br/>- For each person identified, get an answer on all the available questions<br/>- If the name of person exist in the image, take it |
+| DQN TF-agents (QNetwork)                                                                        | Build game model with DQN concurrent TF-agents:<br/>- Define an environment game<br/>- Define a TF-agents (one per player) to learn to play |
+| Sentence/image cosine similarity<br/>(sentence transformers and google image feature extraction)| Use another images or questions that game defined | 
 ## Challenges
 
-Topic don't develop a model on the "lie factor" to better account for the fact that the adversary may lie to a question.
-To be applicable, the volume of data must be much larger and the model must be trained extensively on this volume of data.
+Topic doesn't develop a model on the "lie factor" to better account for the fact that the adversary may lie to a question.
+
+To be applicable, the volume of data shall be much larger and the model shall be trained extensively on this volume of data. We have defined here only an example.
+
+Sequences of question study can be developed on several other thematics: Which type of questions are better? Could we define a well on the questions in function of capacity to eliminate a characters ?...    
 
 What does your project _not_ solve? Which limitations and ethical considerations should be taken into account when deploying a solution like this?
 
