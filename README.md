@@ -38,10 +38,6 @@ Topics have been developed in a Colab project.
 
 You have need to update the "basic" Colab configuration on each part as described in the Colab project.
 
-
-Describe the process of using the solution. In what kind situations is the solution needed (environment, time, etc.)? Who are the users, what kinds of needs should be taken into account?
-
-Images will make your README look nice!
 Once you upload an image to your repository, you can link link to it like this (replace the URL with file path, if you've uploaded an image to Github.)
 ![Cat](https://upload.wikimedia.org/wikipedia/commons/5/5e/Sleeping_cat_on_her_back.jpg)
 
@@ -141,16 +137,15 @@ AI methods are described in the array below.
 
 Topic doesn't develop a model on the "lie factor" to better account for the fact that the adversary may lie to a question.
 
-To be applicable, the volume of data shall be much larger and the model shall be trained extensively on this volume of data. We have defined here only an example.
+To be applicable, the volume of data shall be much larger and the model shall be trained extensively on this volume of data (images, questions). We have defined here only an example.
 
-Sequences of question study can be developed on several other thematics: Which type of questions are better? Could we define a well on the questions in function of capacity to eliminate a characters ?...    
+The study of question sequences can be developed on several other themes: Which type of questions are better? Could we define weights for the questions?...    
 
-What does your project _not_ solve? Which limitations and ethical considerations should be taken into account when deploying a solution like this?
+Anonymous of recorded data used (images) to train the model shall be taken in consideration to deploy a solution with a model computed to recognize an person in a group with a sequence of questions.   
 
 ## What next?
 
-How could your project grow and become something even more? What kind of skills, what kind of assistance would you  need to move on? 
-
+This project could be grow in the development of application on the security domain.
 
 ## Acknowledgments
 
