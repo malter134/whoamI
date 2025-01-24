@@ -4,7 +4,9 @@ Building AI course project : Whoami model with TF agents
 ## Summary
 
 Here we propose a model of TF-agents to play the famous game "Who am I?".
-Our version goes beyond the "basic" game because we will use other capabilities provided by AI (training of concurrent dynamic agents, image recognition and language models), to be able to apply this type of game to: a configurable number of characters (larger or smaller than the base game) and any photo of characters in a scene (so we can play with a family photo for example if we want)
+Our version goes beyond the "basic" game because we will use other capabilities provided by AI (training of concurrent dynamic agents, image recognition and language models), to be able to apply this type of game to: a configurable number of characters (larger or smaller than the base game) and any photo of characters in a scene (so we can play with a family photo for example if we want).
+
+Only a summarize of activities is provided here. Works are developed in the Colab file: [Colab Whoami model with TF agents](https://github.com/malter134/whoamI/Whomai model with TF agents.ipynb)
 
 ## Background
 
@@ -18,23 +20,23 @@ Apart from the "practical" side of this game, the interest of this game is to co
 
 ## How is it used?
 
-In the first part, we develop game data for the model:
+In the first part, we develop game data (dataset) for the model:
   * Define the list of game questions with NLP traduction
-  * Establish the dictionnary of people and the basic functions of the game environment with easyocr, huggingface, insighface, transformers and pipeline
+  * Establish the dictionnary of people which will be used by the game environment with easyocr, huggingface, insighface, transformers and pipeline
   * Test these elements on several examples.
 
-In the second part, we develop the game model as a DQN agents working on a environment:
+In the second part, we develop the game model as a concurrent DQN agents working on a game environment:
    * Define the game environment with constraints and using the game data
-   * Reuse the multi-agent interface
-   * Instantiate the concurrent DQN agents (one by player) with QNetwork
+   * Reuse the multi-agents interface
+   * Instantiate the concurrent DQN agents (one by player) with a QNetwork
    * Train the model
    * Analyse the question sequences
    * Evaluate the model
-   * Try to adapt the game at another images or questions recorded with cosine similarity with sentence transformers and google image feature extraction
+   * Try to adapt the game at another images or questions with cosine similarity with sentence transformers and google image feature extraction
      
-Topic has been developt in a Colab project.
+Topics have been developed in a Colab project.
 
-You have need to update the "basic" Colab configuration on each part as described in the topic.
+You have need to update the "basic" Colab configuration on each part as described in the Colab project.
 
 
 Describe the process of using the solution. In what kind situations is the solution needed (environment, time, etc.)? Who are the users, what kinds of needs should be taken into account?
@@ -46,7 +48,7 @@ Once you upload an image to your repository, you can link link to it like this (
 If you need to resize images, you have to use an HTML tag, like this:
 <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Sleeping_cat_on_her_back.jpg" width="300">
 
-This is how you create code examples:
+Example code usage of agents:
 ```
 import random
 
@@ -127,14 +129,22 @@ while not ts.is_last():
 
 
 ## Data sources and AI methods
-Where does your data come from? Do you collect it yourself or do you use data collected by someone else?
-If you need to use links, here's an example:
-[Twitter API](https://developer.twitter.com/en/docs)
+Game datas are computed in the topics in using some samples of images and a list of questions.
+AI methods are described in the array below.
 
-| Syntax      | Description |
-| ----------- | ----------- |
-| Header      | Title       |
-| Paragraph   | Text        |
+| AI methods                                           | Description                                 |
+| ---------------------------------------------------- | ------------------------------------------- |
+| Transformers and pipelines                           | Bwild game datas:                           |
+| (NLP traduction, easyocr, huggingface, insighface)   | - Questions are translated                  |
+|                                                      | - Person images are bounded and split with  |
+|                                                      | face and person recognition                 |
+|                                                      | - For each person identified, get a answer  |
+|                                                      |  on all the available questions             |
+|                                                      | - If the name of person exist in the image, |
+|                                                      | take it                                     |
+
+
+
 
 ## Challenges
 
