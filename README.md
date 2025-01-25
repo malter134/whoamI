@@ -57,7 +57,14 @@ In the second part, we develop the game model as a concurrent DQN agents working
    * Evaluate the model
    * Try to adapt the game at another images or questions with cosine similarity with sentence transformers and google image feature extraction
 
-<img src="[https://github.com/malter134/whoamI/capture-01.png" width="300">
+Game environment execution test:
+```
+environment = WhoAmIMultiAgentEnv()
+utils.validate_py_environment(environment, episodes=20)
+```
+
+<img src="https://github.com/malter134/whoamI/blob/main/capture-02.png" width="500">
+
 
 Example code part usage of agents:
 ```
