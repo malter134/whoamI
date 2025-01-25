@@ -6,7 +6,7 @@ Building AI course project : Whoami model with TF agents
 Here we propose a model of TF-agents to play the famous game "Who am I?".
 Our version goes beyond the "basic" game because we will use other capabilities provided by AI (training of concurrent dynamic agents, image recognition and language models), to be able to apply this type of game to: a configurable number of characters (larger or smaller than the base game) and any photo of characters in a scene (so we can play with a family photo for example if we want).
 
-Only a summarize of activities is provided here. Works are developed in the Colab file: [Colab Whoami model with TF agents](https://github.com/malter134/whoamI/Whomai_model_with_TF_agents.ipynb)
+Only a summarize of activities is provided here. Works are developed in the Colab file: [Colab Whoami model with TF agents](https://github.com/malter134/whoamI/blob/main/Whomai_model_with_TF_agents.ipynb)
 
 ## Background
 
@@ -46,7 +46,7 @@ add_dict_person(image_src, ocr=True)
 print("Done.")
 display_board()
 ```
-<img src="https://github.com/malter134/whoamI/tree/main/capture-01.png" width="300">
+<img src="https://github.com/malter134/whoamI/blob/main/capture-01.png" width="300">
 
 In the second part, we develop the game model as a concurrent DQN agents working on a game environment:
    * Define the game environment with constraints and using the game data
