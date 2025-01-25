@@ -25,6 +25,29 @@ In the first part, we develop game data (dataset) for the model:
   * Establish the dictionnary of people which will be used by the game environment with easyocr, huggingface, insighface, transformers and pipeline
   * Test these elements on several examples.
 
+Example code to append person in the game data:
+```
+# The image of 'whoami standard game'...
+image_src = load_image("http://lecoindespetits.l.e.pic.centerblog.net/o/160fdab2.png")
+plt.title('Original Image')
+plt.imshow(image_src)
+plt.axis('off')
+plt.show()
+
+# Image with bad quality
+# Try to use a small gaussian filter to have a better result
+from PIL import Image
+from scipy import ndimage
+image_src = Image.fromarray(ndimage.gaussian_filter(np.array(image_src), sigma=1.25))
+
+print("Compute the dictionnary of person...")
+reset_dict_person()
+add_dict_person(image_src, ocr=True)
+print("Done.")
+display_board()
+```
+<img src="[https://github.com/malter134/whoamI/capture-01.png" width="300">
+
 In the second part, we develop the game model as a concurrent DQN agents working on a game environment:
    * Define the game environment with constraints and using the game data
    * Reuse the multi-agents interface
@@ -33,18 +56,10 @@ In the second part, we develop the game model as a concurrent DQN agents working
    * Analyse the question sequences
    * Evaluate the model
    * Try to adapt the game at another images or questions with cosine similarity with sentence transformers and google image feature extraction
-     
-Topics have been developed in a Colab project.
 
-You have need to update the "basic" Colab configuration on each part as described in the Colab project.
+<img src="[https://github.com/malter134/whoamI/capture-01.png" width="300">
 
-Once you upload an image to your repository, you can link link to it like this (replace the URL with file path, if you've uploaded an image to Github.)
-![Cat](https://upload.wikimedia.org/wikipedia/commons/5/5e/Sleeping_cat_on_her_back.jpg)
-
-If you need to resize images, you have to use an HTML tag, like this:
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Sleeping_cat_on_her_back.jpg" width="300">
-
-Example code usage of agents:
+Example code part usage of agents:
 ```
 import random
 
@@ -123,6 +138,9 @@ while not ts.is_last():
     player = other_player
 ```
 
+Topics have been developed in a Colab project.
+
+You shall update the "basic" Colab configuration on each part as described in the Colab project.
 
 ## Data sources and AI methods
 Game datas are computed in the topics in using some samples of images and a list of questions.
