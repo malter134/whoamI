@@ -46,7 +46,7 @@ add_dict_person(image_src, ocr=True)
 print("Done.")
 display_board()
 ```
-<img src="https://github.com/malter134/whoamI/capture-01.png" width="300">
+<img src="https://github.com/malter134/whoamI/tree/main/capture-01.png" width="300">
 
 In the second part, we develop the game model as a concurrent DQN agents working on a game environment:
    * Define the game environment with constraints and using the game data
