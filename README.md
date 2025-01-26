@@ -64,7 +64,7 @@ utils.validate_py_environment(environment, episodes=20)
 ```
 <img src="https://github.com/malter134/whoamI/blob/main/capture-02.png" width="500">
 
-Example code part usage of agents:
+Example code part use of agents:
 ```
 import random
 
@@ -143,7 +143,7 @@ while not ts.is_last():
     player = other_player
 ```
 
-Example code part usage of agents with similarity:
+Example code part use of agents with similarity:
 ```
 from itertools import cycle
 
