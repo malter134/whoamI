@@ -25,7 +25,177 @@ In the first part, we develop game data (dataset) for the model:
   * Establish the dictionnary of people which will be used by the game environment with easyocr, huggingface, insighface, transformers and pipeline
   * Test these elements on several examples.
 
-Example code to append person in the game data:
+Extract code to build the dictionnary of person:
+```
+# Dictionnary person generation
+...
+# constant in pixels to delimit a zone arround the face (adjust if need)
+delta_face_arround_ctx_x = 20
+delta_face_arround_ctx_y = 70
+
+# Load the insightface model to detect person in a image
+def load_model_detection():
+    path = huggingface_hub.hf_hub_download("public-data/insightface", "models/scrfd_person_2.5g.onnx")
+    options = ort.SessionOptions()
+    options.intra_op_num_threads = 8
+    options.inter_op_num_threads = 8
+    session = ort.InferenceSession(
+        path, sess_options=options, providers=["CPUExecutionProvider", "CUDAExecutionProvider"]
+    )
+    model = insightface.model_zoo.retinaface.RetinaFace(model_file=path, session=session)
+    return model
+
+# Method to detect a person in image, return bounding box
+def detect_person(
+    img: np.ndarray, detector: insightface.model_zoo.retinaface.RetinaFace
+) -> tuple[np.ndarray]:
+    bboxes, kpss = detector.detect(img)
+    bboxes = np.round(bboxes[:, :4]).astype(int)
+    return bboxes
+
+# Extract the images of person from the source image
+def extract_sub_images(image: np.ndarray, bboxes: np.ndarray) -> list[np.ndarray]:
+    res = []
+    for i in range(len(bboxes)):
+        bbox = bboxes[i]
+        x1, y1, x2, y2 = bbox
+        res.append(image[y1:y2, x1:x2])
+    return res
+
+# Init part (models and pipelines)
+detector = load_model_detection()
+detector.prepare(-1, nms_thresh=0.5, input_size=(640, 640))
+face_detector = FaceAnalysis()
+# ctx_id = 0 (GPUid), det_size of image
+face_detector.prepare(ctx_id=0, det_size=(640,640))
+reader = easyocr.Reader(['en','en']) # this needs to run only once to load the model into memory
+vqa_pipeline = pipeline("visual-question-answering", device="cuda")
+
+# Extract text of image (ocr)
+def text_extract(image: np.ndarray) -> str:
+    result = reader.readtext(image, detail = 0)
+    # Remove the element with double because the name shall be unique...
+    result = [r for r in result if result.count(r) == 1]
+    res = ' '.join(result)
+    return res
+
+# Extract sub-image of person from the source image
+def detect_extract(image: np.ndarray) -> np.ndarray:
+    # Try with a complete person
+    bboxes = detect_person(image, detector)
+    # If not found, try with the face of person
+    if len(bboxes) == 0:
+        bboxes = []
+        faces = face_detector.get(image)
+        if len(faces) > 0:
+          for i in range(len(faces)):
+            x1, y1, x2, y2 = np.round(faces[i]['bbox']).astype(int)
+            # Append delta arround the face to append the context and name
+            if x1 - delta_face_arround_ctx_x < 0:
+                x1 = 0
+            else:
+                x1 = x1 - delta_face_arround_ctx_x
+            if y1 - delta_face_arround_ctx_y < 0:
+                y1 = 0
+            else:
+                y1 = y1 - delta_face_arround_ctx_y
+            if x2 + delta_face_arround_ctx_x > image.shape[1]:
+                x2 = image.shape[0]
+            else:
+                x2 = x2 + delta_face_arround_ctx_x
+            if y2 + delta_face_arround_ctx_y > image.shape[0]:
+                y2 = image.shape[1]
+            else:
+                y2 = y2 + delta_face_arround_ctx_y
+            x1_m = min(x1, x2)
+            y1_m = min(y1, y2)
+            x2_m = max(x1, x2)
+            y2_m = max(y1, y2)
+            bboxes.append([x1_m, y1_m, x2_m, y2_m])
+    res = extract_sub_images(image, bboxes)
+    return res
+
+# Query on a image (caption). Return yes or no.
+def query(image: np.ndarray, question: str) -> str:
+    # Convert the NumPy array to a PIL Image
+    image = Image.fromarray(image) # Convert the NumPy array to a PIL Image object
+    res = vqa_pipeline({"image": image, "question": question}, top_k=1)
+    return res[0]['answer']
+
+# The "dictionnary" of person
+dict_person = []
+
+# To reset the dict person
+def reset_dict_person():
+  dict_person.clear()
+
+# To update the dict person with all infos on the person
+def update_dict_person(person_id: int, person_img: np.ndarray, question_list, ocr=False):
+  person_name = ''
+  if (ocr == True):
+    # Search if the name of person exist in the image (optional)
+    person_name = text_extract(person_img)
+    # To have a short name we keep here only the first part of long name
+    person_name = person_name.split()[0]
+  if len(person_name) < 2:
+    # Ignore the result and use a generic name
+    person_name = "Person" + str(person_id)
+  questions = {}
+  for q in question_list:
+      questions[q] = query(person_img, q)
+  # Check if person_id already exists in the list of dictionaries
+  person_exists = False
+  for person in dict_person:
+      if person.get('id') == person_id:  # Use get() to avoid KeyError if 'id' is missing
+          person_exists = True
+          person['name'] = person_name
+          person['img'] = person_img
+          person['questions'] = questions
+          break
+  # If person_id doesn't exist, add a new dictionary to the list
+  if not person_exists:
+      dict_person.append({ 'id': person_id, 'name': person_name, 'img': person_img, 'questions': questions })
+...
+# To get a answer yes or no on a question on a person
+def get_answer_on_person(question: str, person_id: int):
+    if question not in dict_person[person_id]['questions']:
+        return "undef"
+    return dict_person[person_id]['questions'][question]
+
+# To get a answer on a question for a list of person
+# Return can be "yes", "no" or "undef"
+def get_answer_on_list_person(question: str, sub_list_person_id = range(len(dict_person))):
+    # Check "yes" case for all the person on the sub list of person
+    res = "yes"
+    for person in dict_person:
+      for i in sub_list_person_id:
+        if person['id'] == i:
+          if person['questions'][question] == "no":
+            res = "no"
+            break
+    if res == "yes":
+      return "yes"
+    # Check "no" case for all the person on the sub list of person
+    res = "no"
+    for person in dict_person:
+      for i in sub_list_person_id:
+        if person['id'] == i:
+          if person['questions'][question] == "yes":
+            res = "yes"
+            break
+    if res == "no":
+      return "no"
+    return "undef"
+...
+# To add a dict person from a image source
+def add_dict_person(image_src: np.ndarray, ocr=False):
+  nb_person = get_nb_person()
+  for img in detect_extract(np.asarray(image_src)):
+    update_dict_person(nb_person, img, question_list, ocr)
+    nb_person +=1
+```
+
+Example code to append a person in the game data:
 ```
 # The image of 'whoami standard game'...
 image_src = load_image("http://lecoindespetits.l.e.pic.centerblog.net/o/160fdab2.png")
@@ -33,13 +203,7 @@ plt.title('Original Image')
 plt.imshow(image_src)
 plt.axis('off')
 plt.show()
-
-# Image with bad quality
-# Try to use a small gaussian filter to have a better result
-from PIL import Image
-from scipy import ndimage
-image_src = Image.fromarray(ndimage.gaussian_filter(np.array(image_src), sigma=1.25))
-
+...
 print("Compute the dictionnary of person...")
 reset_dict_person()
 add_dict_person(image_src, ocr=True)
