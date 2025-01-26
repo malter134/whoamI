@@ -62,9 +62,7 @@ Game environment execution test:
 environment = WhoAmIMultiAgentEnv()
 utils.validate_py_environment(environment, episodes=20)
 ```
-
 <img src="https://github.com/malter134/whoamI/blob/main/capture-02.png" width="500">
-
 
 Example code part usage of agents:
 ```
@@ -143,6 +141,93 @@ while not ts.is_last():
     print_whoami(ts.observation)
     print_seq_questions(whoami_env.get_seq_questions())
     player = other_player
+```
+
+Example code part usage of agents with similarity:
+```
+from itertools import cycle
+
+ts = tf_ttt_env.reset()
+player_1.reset()
+player_2.reset()
+print('Start:')
+# arbitrary starting point to add variety
+random.seed(1)
+# Selected item is an initial condition
+selected_item = np.array([0, 0])
+
+# Suppose that you interest on a person
+# Give me a person which isn't in the dictionnary
+image_src = load_image("...")
+plt.title('A person to found (not in the dictionnary)')
+plt.imshow(image_src)
+plt.axis('off')
+plt.show()
+p_id = get_id_similar_image(image_src)
+if p_id == -1:
+  print("Similar image not found. Update your image and retry.")
+  exit(0)
+# Player 2 shall found my person...
+selected_item[0] = p_id
+selected_item[1] = selected_item[0]
+while selected_item[0] == selected_item[1]:
+  selected_item[1] = random.choice(range(nb_person))
+player_1.reset()
+player_2.reset()
+selected_question_id_for_player_1 = None
+selected_question_id_for_player_2 = None
+print('Start board:')
+print_whoami(ts.observation[0].numpy())
+# Player 1 begin for example
+players = cycle([player_1, player_2])
+list_q_id = []
+
+try:
+
+  while not ts.is_last():
+    player = next(players)
+    player_id = 1 if player == player_1 else 2
+    other_player_id = 1 + player_id % 2
+    action_dict = tf_ttt_env.envs[0].get_current_action()
+    # User shall choose the questions
+    while True:
+        print('Give an english question to play here:')
+        input(q)
+        q_id = get_id_similar_question(q)
+        if q_id == -1:
+          print("Similar question not found. Try again.")
+        else:
+          # Question already given ?
+          if q_id in list_q_id:
+            print("Question already given. Try another question.")
+          else:
+            list_q_id.append(q_id)
+            selected_question_id_for_player_1 = q_id
+            break
+    # User will be player 1
+    if player_id == 1:
+      action_dict['question'][player_id-1] = selected_question_id_for_player_1
+    else:
+      action_dict['question'][other_player_id-1] = selected_question_id_for_player_1
+
+    player.act()
+    ts = tf_ttt_env.current_time_step()
+    print('Player:', {player.name}, '\n',
+          'Question of player:', question_list[action_dict['question'][player_id-1]], '\n',
+          'Answer of other player:', yesno(action_dict['answer'][other_player_id-1]), '\n',
+          'Question of other player:', question_list[action_dict['question'][other_player_id-1]], '\n',
+          'Answer of player:', yesno(action_dict['answer'][player_id-1]), '\n',
+          'Reward:', ts.reward[0].numpy(), 'Board:')
+    print_whoami(ts.observation[0].numpy())
+    print_seq_questions(tf_ttt_env.envs[0].get_seq_questions())
+    print('Your board:')
+    id_person_deleted_1 = tf_ttt_env.envs[0].get_deleted_items()
+    for i in range(len(id_person_deleted_1)):
+      id_person_deleted_1[i] = id_person_deleted_1[i][0]
+    display_board(id_person_deleted_1)
+
+except KeyboardInterrupt:
+    print('Interrupted by user...')
 ```
 
 Topics have been developed in a Colab project.
