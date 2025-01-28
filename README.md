@@ -412,6 +412,8 @@ Samples of dictionnary of person generated are given (basic_dict_person.npy and 
 
 Agents models and training checkpoints are also given in checkpoints and model directories.
 
+Note: To unsplit file extended_dict_person.npy, the commands are: cat split_extended_dict_person.tgz_* > extended_dict_person.tgz ; tar xvf extended_dict_person.tgz
+
 ## Challenges
 
 Topic doesn't develop a model on the "lie factor" to better account for the fact that the adversary may lie to a question.
