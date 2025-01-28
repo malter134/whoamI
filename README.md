@@ -416,13 +416,13 @@ Note: To unsplit file extended_dict_person.npy, the commands are: cat split_exte
 
 ## Challenges
 
-Topic doesn't develop a model on the "lie factor" to better account for the fact that the adversary may lie to a question.
+Topic doesn't develop a complete model on the "lie factor" to better account for the fact that the adversary may lie to a question.
 
-To be applicable, the volume of data shall be much larger and the model shall be trained extensively on this volume of data (images, questions). We have defined here only an example.
+To be applicable, the volume of data shall be much larger and the model shall be trained extensively on this volume of data (images, questions). We have defined here only an example as proof of concept.
 
 The study of question sequences can be developed on several other themes: Which type of questions are better? Could we define weights for the questions?...    
 
-Anonymous of recorded data used (images) to train the model shall be taken in consideration to deploy a solution with a model computed to recognize an person in a group with a sequence of questions.   
+Anonymous of recorded data used (images) to train the model shall be taken in consideration to deploy a solution with a model computed to recognize an real person in a group with a sequence of questions.   
 
 ## What next?
 
