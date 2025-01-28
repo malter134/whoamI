@@ -228,7 +228,7 @@ utils.validate_py_environment(environment, episodes=20)
 ```
 <img src="https://github.com/malter134/whoamI/blob/main/capture-02.png" width="500">
 
-Example code part use of agents:
+Example code part to test the game environment:
 ```
 import random
 
@@ -410,7 +410,7 @@ AI methods are described in the array below.
 
 Samples of dictionnary of person generated are given (basic_dict_person.npy and split file extended_dict_person.npy).
 
-Agents models and training checkpoints are also given in checkpoints and models directory.
+Agents models and training checkpoints are also given in checkpoints and model directories.
 
 ## Challenges
 
