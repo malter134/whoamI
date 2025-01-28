@@ -407,6 +407,11 @@ AI methods are described in the array below.
 | Transformers and pipelines<br/>(NLP traduction, easyocr, huggingface, insighface)               | Build game datas:<br/>- Questions are translated\n- Person images are bounded and split with face and person recognition<br/>- For each person identified, get an answer on all the available questions<br/>- If the name of person exist in the image, take it |
 | DQN TF-agents (QNetwork)                                                                        | Build game model with DQN concurrent TF-agents:<br/>- Define an environment game<br/>- Define a TF-agents (one per player) to learn to play |
 | Sentence/image cosine similarity<br/>(sentence transformers and google image feature extraction pipeline)| Use another images or questions that game defined | 
+
+Samples of dictionnary of person generated are given (basic_dict_person.npy and split file extended_dict_person.npy).
+
+Agents models and training checkpoints are also given in checkpoints and models directory.
+
 ## Challenges
 
 Topic doesn't develop a model on the "lie factor" to better account for the fact that the adversary may lie to a question.
