@@ -410,7 +410,7 @@ AI methods are described in the array below.
 
 Samples of dictionnary of person generated are given (basic_dict_person.npy and split file extended_dict_person.npy).
 
-Agents models and training checkpoints are also given in checkpoints and model directories.
+Agents models and training checkpoints are also given in checkpoints and model zip files directories.
 
 Note: To unsplit file extended_dict_person.npy, the commands are: cat split_extended_dict_person.tgz_* > extended_dict_person.tgz ; tar xvf extended_dict_person.tgz
 
