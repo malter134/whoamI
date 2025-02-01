@@ -360,18 +360,22 @@ try:
     # User shall choose the questions
     while True:
         print('Give an english question to play here:')
+        q = ''
         input(q)
-        q_id = get_id_similar_question(q)
-        if q_id == -1:
-          print("Similar question not found. Try again.")
+        if q == '':
+          print("No question given. Try again.")
         else:
-          # Question already given ?
-          if q_id in list_q_id:
-            print("Question already given. Try another question.")
-          else:
-            list_q_id.append(q_id)
-            selected_question_id_for_player_1 = q_id
-            break
+         q_id = get_id_similar_question(q)
+         if q_id == -1:
+           print("Similar question not found. Try again.")
+         else:
+           # Question already given ?
+           if q_id in list_q_id:
+             print("Question already given. Try another question.")
+           else:
+             list_q_id.append(q_id)
+             selected_question_id_for_player_1 = q_id
+             break
     # User will be player 1
     if player_id == 1:
       action_dict['question'][player_id-1] = selected_question_id_for_player_1
