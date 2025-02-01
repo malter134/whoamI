@@ -312,6 +312,8 @@ while not ts.is_last():
 Example code part use of agents with similarity:
 ```
 from itertools import cycle
+from diffusers.utils import load_image
+import matplotlib.pyplot as plt
 
 ts = tf_ttt_env.reset()
 player_1.reset()
