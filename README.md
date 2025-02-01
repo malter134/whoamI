@@ -8,6 +8,8 @@ Our version goes beyond the "basic" game because we will use other capabilities 
 
 Only a summarize of activities is provided here. Works are developed in the Colab file: [Colab Whoami model with TF agents](https://github.com/malter134/whoamI/blob/main/Whomai_model_with_TF_agents.ipynb)
 
+Note: The models created here should not be put into production (insufficient input data volume and training). This is a "proof-of-concept" only.
+
 ## Background
 
 There are already mathematical theories on gambling. These generally offer an approach in the form of probabilistic calculations on the chances of winning, highlighting the combinatorics of questions. Some of them have been recalled here in the sources.
