@@ -361,7 +361,7 @@ try:
     while True:
         print('Give an english question to play here:')
         q = ''
-        input(q)
+        q = input()
         if q == '':
           print("No question given. Try again.")
         else:
