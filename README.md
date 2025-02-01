@@ -334,7 +334,7 @@ plt.show()
 p_id = get_id_similar_image(image_src)
 if p_id == -1:
   print("Similar image not found. Update your image and retry.")
-  exit(0)
+  exit
 # Player 2 shall found my person...
 selected_item[0] = p_id
 selected_item[1] = selected_item[0]
